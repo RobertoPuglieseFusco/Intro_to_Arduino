@@ -20,8 +20,8 @@ void loop(){
   value = analogRead(pResistor);
   Serial.print("value: ");
   Serial.println(value);
-  //You can change value "25"
-  if (value > 450){
+  
+  if (value > 650){
     digitalWrite(ledPin, LOW);  //Turn led off
   }
   else{

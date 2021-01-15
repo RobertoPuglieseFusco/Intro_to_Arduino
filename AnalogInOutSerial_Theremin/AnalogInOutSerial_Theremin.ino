@@ -38,7 +38,7 @@ void loop() {
   // read the analog in value:
   sensorValue = analogRead(analogInPin);
   // map it to the range of the analog out:
-  outputValue = constrain(map(sensorValue, 928, 600, 0, 255), 0, 255);
+  outputValue = constrain(map(sensorValue, 850, 470, 0, 255), 0, 255);
   // change the analog out value:
   analogWrite(analogOutPin, outputValue);
 
@@ -52,10 +52,10 @@ void loop() {
 
   int frequencyLog = log(sensorValue + 1) / log(1024) * 1024;
   int frequency = map(frequencyLog, 0, 1024, 3000, 80);
-  Serial.print("\t frequency = ");
-  Serial.println(frequency);
+//  Serial.print("\t frequency = ");
+//  Serial.println(frequency);
 
-  if (outputValue > 2) {
+  if (outputValue > 10) {
     tone(piezoPin, frequency, 50);
   }
   else {
