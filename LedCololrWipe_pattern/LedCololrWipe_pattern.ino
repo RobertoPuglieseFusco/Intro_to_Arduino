@@ -36,31 +36,14 @@ void loop() {
 
   pixels.clear(); // Set all pixel colors to 'off'
 
-  // The first NeoPixel in a strand is #0, second is 1, all the way up
-  // to the count of pixels minus one.
-  for (int i = 0; i < NUMPIXELS; i++) { // For each pixel...
+  colorWipe(pixels.Color(255,   0,   0), 50);    // Red
 
-    // pixels.Color() takes RGB values, from 0,0,0 up to 255,255,255
-    // Here we're using a moderately bright green color:
+}
 
-    int myRedChannel = map(i, 0, (NUMPIXELS - 1), 50, 255);
-    int myBlueChannel = map(i, 0, (NUMPIXELS - 1), 255, 40);
-    int myGreenChannel = map(i, 0, (NUMPIXELS - 1), 50, 120);
-
-    pixels.setPixelColor(i, pixels.Color(myRedChannel, myGreenChannel, myBlueChannel));
-
-    pixels.show();   // Send the updated pixel colors to the hardware.
-
-    delay(DELAYVAL); // Pause before next pass through loop
+void colorWipe(uint32_t color, int wait) {
+  for(int i=0; i<pixels.numPixels(); i++) { // For each pixel in strip...
+    pixels.setPixelColor(i, color);         //  Set pixel's color (in RAM)
+    pixels.show();                          //  Update strip to match
+    delay(wait);                           //  Pause for a moment
   }
-  for (int i = NUMPIXELS - 1; i >= 0; i--) { // For each pixel...
-
-    pixels.setPixelColor(i, pixels.Color(0, 0, 0));
-
-    pixels.show();   // Send the updated pixel colors to the hardware.
-
-    delay(DELAYVAL); // Pause before next pass through loop
-
-  }
-
 }
