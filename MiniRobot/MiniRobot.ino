@@ -86,41 +86,39 @@ void loop() {
     x_pos = zx_sensor.readX();
     if ( x_pos != ZX_ERROR ) {
       Serial.print("X: ");
-      Serial.print(x_pos);
+      Serial.println(x_pos);
       // val1 = constrain(map(x_pos, 50, 200, 160, 20), 0, 180);    // scale it to use it with the servo (value between 0 and 180)
 
+      z_pos = zx_sensor.readZ();
+      if ( z_pos != ZX_ERROR ) {
+//        Serial.print("Z: ");
+//        Serial.println(z_pos);
+        if (z_pos < 250 && z_pos > 2) {
 
+          if (x_pos > 125 && val1 > 1) {
+            val1--;
+            myservo1.write(val1);                  // sets the servo position according to the scaled value
 
-    }
-    z_pos = zx_sensor.readZ();
-    if ( z_pos != ZX_ERROR ) {
-      //Serial.print(" Z: ");
-      //Serial.println(z_pos);
-      if (z_pos < 230) {
+            delay(1);
+          }
 
-        if (x_pos > 125 && val1 > 1) {
-          val1--;
-          myservo1.write(val1);                  // sets the servo position according to the scaled value
+          else if (x_pos < 115 && val1 < 179) {
+            val1++;
+            myservo1.write(val1);
+            delay(1);
 
-          delay(1);
+          }
+          //          Serial.print(" pan: ");
+          //          Serial.println(val1);
+          val2 = map(z_pos, 0, 255, 120, 30);     // scale it to use it with the servo (value between 0 and 180)
+          myservo2.write(val2);                  // sets the servo position according to the scaled value
+
         }
 
-        else if (x_pos < 115 && val1 < 179) {
-
-          val1++;
-          myservo1.write(val1);
-          delay(1);
-
-        }
-        Serial.print(" pan: ");
-        Serial.println(val1);
-        val2 = map(z_pos, 0, 255, 110, 70);     // scale it to use it with the servo (value between 0 and 180)
-        myservo2.write(val2);                  // sets the servo position according to the scaled value
 
       }
-
-
     }
 
   }
+
 }
