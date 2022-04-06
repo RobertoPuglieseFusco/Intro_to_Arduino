@@ -4,6 +4,9 @@
 #define IN4 11
 int Steps = 0;
 boolean Direction = true;
+
+char inChar;
+
 void setup() {
   Serial.begin(9600);
   pinMode(IN1, OUTPUT);
@@ -12,27 +15,22 @@ void setup() {
   pinMode(IN4, OUTPUT);
 }
 void loop() {
-  //  for (int i = 0; i < 4096; i++) {
-  //    stepper(1);
-  //    delayMicroseconds(800);
-  //  }
-  //  Direction = !Direction;
 
-
-  if (Serial.available() > 0) {
-    char inChar = (char)Serial.read();
-    Serial.println(inChar);
-    if (inChar == 'f') {
-      for (int i = 0; i < 48; i++) {
-        stepForward();
-      }
-    }
-    else {
-      for (int i = 0; i < 48; i++) {
-        stepBackwards();
-      }
+  while (Serial.available()) {
+    inChar = (char)Serial.read();
+  }
+  Serial.println(inChar);
+  if (inChar == 'f') {
+    for (int i = 0; i < 2; i++) {
+      stepForward();
     }
   }
+  else if (inChar == 'b') {
+    for (int i = 0; i < 2; i++) {
+      stepBackwards();
+    }
+  }
+
 
 }
 
