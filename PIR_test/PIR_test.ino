@@ -3,7 +3,7 @@
  */
  
 int ledPin = 13;                // choose the pin for the LED
-int inputPin = 2;               // choose the input pin (for PIR sensor)
+int inputPin = 3;               // choose the input pin (for PIR sensor)
 int pirState = LOW;             // we start, assuming no motion detected
 int val = 0;                    // variable for reading the pin status
  
@@ -15,7 +15,7 @@ void setup() {
 }
  
 void loop(){
-  val = analogRead(inputPin);  // read input value
+  val = digitalRead(inputPin);  // read input value
   Serial.println(val);
   if (val == HIGH) {            // check if the input is HIGH
     digitalWrite(ledPin, HIGH);  // turn LED ON

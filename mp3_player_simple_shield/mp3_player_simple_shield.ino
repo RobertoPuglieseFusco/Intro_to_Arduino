@@ -46,12 +46,13 @@ Adafruit_VS1053_FilePlayer musicPlayer =
 
 
 int ledPin = 13;                // choose the pin for the LED
-int inputPin = 2;               // choose the input pin (for PIR sensor)
+int inputPin = 5;               // choose the input pin (for PIR sensor)
 int pirState = LOW;             // we start, assuming no motion detected
-int val = 0;                    // variable for reading the pin status
+int value = 0;                    // variable for reading the pin status
 int myCounter = 0;
 
 void setup() {
+  pinMode(inputPin, INPUT);
   Serial.begin(9600);
   Serial.println("Adafruit VS1053 Simple Test");
 
@@ -83,71 +84,73 @@ void setup() {
   Serial.println(F("Playing track 001"));
   musicPlayer.playFullFile("/TRACK001.mp3");
   // Play another file in the background, REQUIRES interrupts!
-  Serial.println(F("Playing track 002"));
-  musicPlayer.startPlayingFile("/TRACK003.mp3");
+  //Serial.println(F("Playing track 002"));
+  //musicPlayer.startPlayingFile("/TRACK003.mp3");
 }
 
 void loop() {
 
-  val = analogRead(inputPin);  // read input value
-  if (val >= 100) {            // check if the input is HIGH
-    digitalWrite(ledPin, HIGH);  // turn LED ON
-    if (pirState == LOW) {
-      // we have just turned on
-      Serial.println("Motion detected!");
-      // We only want to print on the output change, not state
-      pirState = HIGH;
-    }
-  } else {
-    digitalWrite(ledPin, LOW); // turn LED OFF
-    if (pirState == HIGH) {
-      // we have just turned of
-      Serial.println("Motion ended!");
-      // We only want to print on the output change, not state
-      pirState = LOW;
-      myCounter = 0;
-    }
-  }
+  value = digitalRead(inputPin);  // read input value
+  Serial.println(value);
+  pirState = value;
+//  if (value == HIGH) {            // check if the input is HIGH
+//    digitalWrite(ledPin, HIGH);  // turn LED ON
+//    if (pirState == LOW) {
+//      // we have just turned on
+//      Serial.println("Motion detected! " + value);
+//      // We only want to print on the output change, not state
+//      pirState = HIGH;
+//    }
+//  } else {
+//    digitalWrite(ledPin, LOW); // turn LED OFF
+//    if (pirState == HIGH) {
+//      // we have just turned of
+//      Serial.println("Motion ended!");
+//      // We only want to print on the output change, not state
+//      pirState = LOW;
+//      myCounter = 0;
+//    }
+//  }
 
   // File is playing in the background
-  if (musicPlayer.stopped() && pirState == HIGH) {
-
-    Serial.println("Done playing music");
-    //myCounter++;
-    //Serial.println(myCounter);
-    char Numa [3] ;
-    int fileToPlay = random(1, 11);
-    Serial.println(fileToPlay) ;
-    sprintf (Numa, "%03i", fileToPlay) ;  // leading zeroes, at least 4 chars.
-    String myString = String(Numa);
-    
-    String fileName = String("/TRACK" + myString + ".mp3");
-    Serial.println(fileName) ;
-    //musicPlayer.startPlayingFile(fileName);
-    musicPlayer.playFullFile(fileName.c_str());
-
-    delay(1000);  // we're done! do nothing...
-
-  }
-  if (Serial.available()) {
-    char c = Serial.read();
-
-    // if we get an 's' on the serial console, stop!
-    if (c == 's') {
-      musicPlayer.stopPlaying();
-    }
-
-    // if we get an 'p' on the serial console, pause/unpause!
-    if (c == 'p') {
-      if (! musicPlayer.paused()) {
-        Serial.println("Paused");
-        musicPlayer.pausePlaying(true);
-      } else {
-        Serial.println("Resumed");
-        musicPlayer.pausePlaying(false);
-      }
-    }
-  }
+//  if (musicPlayer.stopped() && pirState == 1) {
+//
+//    Serial.println("Done playing music");
+//    //myCounter++;
+//    //Serial.println(myCounter);
+//    char Numa [3] ;
+//    int fileToPlay = random(1, 11);
+//    //Serial.println(fileToPlay) ;
+//    sprintf (Numa, "%03i", fileToPlay) ;  // leading zeroes, at least 4 chars.
+//    String myString = String(Numa);
+//    
+//    String fileName = String("/TRACK" + myString + ".mp3");
+//    Serial.println(fileName) ;
+//    //musicPlayer.startPlayingFile(fileName);
+//    musicPlayer.playFullFile(fileName.c_str());
+//    //pirState == LOW;
+//    delay(100);  // we're done! do nothing...
+//
+//  }
+//  if (Serial.available()) {
+//    char c = Serial.read();
+//
+//    // if we get an 's' on the serial console, stop!
+//    if (c == 's') {
+//      musicPlayer.stopPlaying();
+//    }
+//
+//    // if we get an 'p' on the serial console, pause/unpause!
+//    if (c == 'p') {
+//      if (! musicPlayer.paused()) {
+//        Serial.println("Paused");
+//        musicPlayer.pausePlaying(true);
+//      } else {
+//        Serial.println("Resumed");
+//        musicPlayer.pausePlaying(false);
+//      }
+//    }
+//  }
 
   delay(100);
 }
