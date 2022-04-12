@@ -18,7 +18,7 @@ Adafruit_MotorShield AFMS = Adafruit_MotorShield();
 
 // Connect a stepper motor with 200 steps per revolution (1.8 degree)
 // to motor port #2 (M3 and M4)
-Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 1);
+Adafruit_StepperMotor *myMotor = AFMS.getStepper(200, 2);
 
 
 void setup() {
@@ -34,5 +34,5 @@ void setup() {
 void loop() {
  
   //Serial.println("Microstep steps");
-  myMotor->step(1, FORWARD, MICROSTEP); 
+  myMotor->step(1, BACKWARD, MICROSTEP); 
 }
