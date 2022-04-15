@@ -3,12 +3,6 @@
 #define IN3 10
 #define IN4 11
 int Steps = 0;
-boolean Direction = true;
-
-//  Variables
-int PulseSensorPurplePin = 0;        // Pulse Sensor PURPLE WIRE connected to ANALOG PIN 0
-int Signal;                // holds the incoming raw data. Signal value can range from 0-1024
-int Threshold = 550;            // Determine which Signal to "count as a beat", and which to ingore.
 
 int inChar;
 
