@@ -10,7 +10,7 @@ int PulseSensorPurplePin = 0;        // Pulse Sensor PURPLE WIRE connected to AN
 int Signal;                // holds the incoming raw data. Signal value can range from 0-1024
 int Threshold = 550;            // Determine which Signal to "count as a beat", and which to ingore.
 
-char inChar;
+int inChar;
 
 void setup() {
   Serial.begin(115200);
@@ -25,15 +25,13 @@ void loop() {
     if (Serial.available()) {
 
       inChar = Serial.read();
-      //int valA = Serial.parseInt();
-      //Serial.println(valA);
-      int valA = inChar-48;
+
       Serial.println(inChar);
 
-      digitalWrite(valA, HIGH);   // turn the LED on (HIGH is the voltage level)
+      digitalWrite(inChar, HIGH);   // turn the LED on (HIGH is the voltage level)
       delay(50);                       // wait for a second
       //digitalWrite(LED_BUILTIN, LOW);    // turn the LED off by making the voltage LOW
-      digitalWrite(valA, LOW);    // turn the LED off by making the voltage LOW
+      digitalWrite(inChar, LOW);    // turn the LED off by making the voltage LOW
       
     }
 }
