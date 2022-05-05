@@ -1,22 +1,22 @@
 /***************************************************
-DFPlayer - A Mini MP3 Player For Arduino
- <https://www.dfrobot.com/product-1121.html>
- 
+  DFPlayer - A Mini MP3 Player For Arduino
+  <https://www.dfrobot.com/product-1121.html>
+
  ***************************************************
- This example shows the basic function of library for DFPlayer.
- 
- Created 2016-12-07
- By [Angelo qiao](Angelo.qiao@dfrobot.com)
- 
- GNU Lesser General Public License.
- See <http://www.gnu.org/licenses/> for details.
- All above must be included in any redistribution
+  This example shows the basic function of library for DFPlayer.
+
+  Created 2016-12-07
+  By [Angelo qiao](Angelo.qiao@dfrobot.com)
+
+  GNU Lesser General Public License.
+  See <http://www.gnu.org/licenses/> for details.
+  All above must be included in any redistribution
  ****************************************************/
 
 /***********Notice and Trouble shooting***************
- 1.Connection and Diagram can be found here
- <https://www.dfrobot.com/wiki/index.php/DFPlayer_Mini_SKU:DFR0299#Connection_Diagram>
- 2.This code is tested on Arduino Uno, Leonardo, Mega boards.
+  1.Connection and Diagram can be found here
+  <https://www.dfrobot.com/wiki/index.php/DFPlayer_Mini_SKU:DFR0299#Connection_Diagram>
+  2.This code is tested on Arduino Uno, Leonardo, Mega boards.
  ****************************************************/
 
 #include "Arduino.h"
@@ -34,71 +34,63 @@ int value = 0;                    // variable for reading the pin status
 void setup()
 {
 
-pinMode(inputPin, INPUT);
-  
+  pinMode(inputPin, INPUT);
+
   mySoftwareSerial.begin(9600);
-  Serial.begin(115200);
-  
+  Serial.begin(9600);
+
   Serial.println();
   Serial.println(F("DFRobot DFPlayer Mini Demo"));
   Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
-  
+
   if (!myDFPlayer.begin(mySoftwareSerial)) {  //Use softwareSerial to communicate with mp3.
     Serial.println(F("Unable to begin:"));
     Serial.println(F("1.Please recheck the connection!"));
     Serial.println(F("2.Please insert the SD card!"));
-    while(true){
+    while (true) {
       delay(0); // Code to compatible with ESP8266 watch dog.
     }
   }
   Serial.println(F("DFPlayer Mini online."));
-  
-  myDFPlayer.volume(12);  //Set volume value. From 0 to 30
+
+  myDFPlayer.volume(17);  //Set volume value. From 0 to 30
   myDFPlayer.play(1);  //Play the first mp3
 }
 
 void loop()
 {
-  static unsigned long timer = millis();
-
-  value = digitalRead(inputPin);  // read input value
-    if (value == HIGH) {            // check if the input is HIGH
-//    digitalWrite(ledPin, HIGH);  // turn LED ON
+   value = digitalRead(inputPin);  // read input value
+  Serial.println(value);
+  if (value == HIGH) {            // check if the input is HIGH
+    //    digitalWrite(ledPin, HIGH);  // turn LED ON
     if (pirState == LOW) {
       // we have just turned on
       Serial.println("Motion detected! " + value);
       //myDFPlayer.next();  //Play next mp3 every 3 second.
       // We only want to print on the output change, not state
       pirState = HIGH;
-      //myDFPlayer.next(); 
-      int fileToPlay = random(1, 11);
+     // myDFPlayer.next();
+      int fileToPlay = random(1, 12);
       myDFPlayer.play(fileToPlay);  //Play the first mp3
       if (myDFPlayer.available()) {
-    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-  }
+        printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+      }
     }
   } else {
-//    digitalWrite(ledPin, LOW); // turn LED OFF
+    //    digitalWrite(ledPin, LOW); // turn LED OFF
     if (pirState == HIGH) {
       // we have just turned of
       Serial.println("Motion ended!");
       // We only want to print on the output change, not state
       pirState = LOW;
-      
+
     }
   }
-  
-//  if (millis() - timer > 10000 && pirState) {
-//    timer = millis();
-//    myDFPlayer.next();  //Play next mp3 every 3 second.
-//  }
-  
-//  if (myDFPlayer.available()) {
-//    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-//  }
+
+
 }
 
-void printDetail(uint8_t type, int value){
+void printDetail(uint8_t type, int value) {
   switch (type) {
     case TimeOut:
       Serial.println(F("Time Out!"));
@@ -157,5 +149,5 @@ void printDetail(uint8_t type, int value){
     default:
       break;
   }
-  
+
 }
