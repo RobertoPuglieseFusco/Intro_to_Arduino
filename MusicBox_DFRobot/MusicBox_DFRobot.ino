@@ -27,15 +27,13 @@ SoftwareSerial mySoftwareSerial(10, 11); // RX, TX
 DFRobotDFPlayerMini myDFPlayer;
 void printDetail(uint8_t type, int value);
 
-int inputPin = 2;               // choose the input pin (for PIR sensor)
-int pirState = LOW;             // we start, assuming no motion detected
 int value = 0;                    // variable for reading the pin status
 int nextPin = 2;
 int prevPin = 3;
 int volumePin = A0;
 int playPin = 4;
 
-int ledPin = 5;
+int ledPin = 13;
 
 bool playMode = false;
 
@@ -45,10 +43,9 @@ int numFiles = 4;
 void setup()
 {
 
-  pinMode(inputPin, INPUT);
-  pinMode(nextPin, INPUT);
-  pinMode(prevPin, INPUT);
-  pinMode(playPin, INPUT);
+  pinMode(nextPin, INPUT_PULLUP);
+  pinMode(prevPin, INPUT_PULLUP);
+  pinMode(playPin, INPUT_PULLUP);
 
   pinMode(ledPin, OUTPUT);
 
@@ -78,15 +75,16 @@ void setup()
 void loop()
 {
 
-  if (myDFPlayer.available()) {
-    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-  }
+//  if (myDFPlayer.available()) {
+//    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+//  }
 
 
   // NEXT
   value = digitalRead(nextPin);  // read input value
-  if (value == true) {
+  if (value == false) {
     fileToPlay++;
+    myDFPlayer.enableLoop(); //enable loop.
     myDFPlayer.next();
     playMode = true;
     if (fileToPlay > numFiles) {
@@ -97,8 +95,9 @@ void loop()
 
   // PREV
   value = digitalRead(prevPin);  // read input value
-  if (value == true) {
+  if (value == false) {
     fileToPlay--;
+    myDFPlayer.enableLoop(); //enable loop.
     myDFPlayer.previous();
     playMode = true;
     if (fileToPlay < 1) {
@@ -109,27 +108,33 @@ void loop()
 
   //PLAY / STOP
   value = digitalRead(playPin);  // read input value
-  if (value == true) {
+  if (value == false) {
+    Serial.println("pressed play button");
     if (playMode) {
+      Serial.println("stop");
       myDFPlayer.pause();  //pause the mp3
       playMode = false;
       delay(500);
     }
     else {
+      myDFPlayer.enableLoop(); //enable loop.
       myDFPlayer.start();  //start the mp3 from the pause
+      Serial.println("play");
       playMode = true;
       delay(500);
     }
   }
   if (playMode) {
     digitalWrite(ledPin, HIGH);
+    digitalWrite(LED_BUILTIN, HIGH);
   }
   else {
     digitalWrite(ledPin, LOW);
+    digitalWrite(LED_BUILTIN, LOW);
   }
 
   value = analogRead(volumePin);
-  myDFPlayer.volume(map(value, 0, 1023, 0, 28));
+  myDFPlayer.volume(map(value, 1023, 0, 0, 28));
 
 }
 
