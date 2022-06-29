@@ -37,8 +37,12 @@ int ledPin = 13;
 
 bool playMode = false;
 
-int fileToPlay = 1;
+int fileToPlay = 3;
 int numFiles = 4;
+unsigned long timer = 0;
+unsigned long timeOffset = 0;
+
+uint8_t vol = 20;
 
 void setup()
 {
@@ -66,30 +70,32 @@ void setup()
   }
   Serial.println(F("DFPlayer Mini online."));
 
-  myDFPlayer.enableLoopAll(); //loop all mp3 files.
-
-  myDFPlayer.volume(17);  //Set volume value. From 0 to 30
+  myDFPlayer.volume(vol);  //Set volume value. From 0 to 30
   myDFPlayer.play(fileToPlay);  //Play the first mp3
 }
 
 void loop()
 {
 
-//  if (myDFPlayer.available()) {
-//    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
-//  }
+  if (myDFPlayer.available() && (millis() - timer > 4000)) {
+    timer = millis();
+    Serial.print(timer);
+    Serial.print(" ");
+    Serial.println(millis());
+    printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
+  }
 
 
   // NEXT
   value = digitalRead(nextPin);  // read input value
   if (value == false) {
     fileToPlay++;
-    myDFPlayer.enableLoop(); //enable loop.
-    myDFPlayer.next();
     playMode = true;
+    Serial.println("pressed next");
     if (fileToPlay > numFiles) {
       fileToPlay = 1;
     }
+    playTrack(fileToPlay);
     delay(500);
   }
 
@@ -97,12 +103,13 @@ void loop()
   value = digitalRead(prevPin);  // read input value
   if (value == false) {
     fileToPlay--;
-    myDFPlayer.enableLoop(); //enable loop.
-    myDFPlayer.previous();
+    
     playMode = true;
+    Serial.println("pressed previous");
     if (fileToPlay < 1) {
       fileToPlay = numFiles;
     }
+    playTrack(fileToPlay);
     delay(500);
   }
 
@@ -117,7 +124,6 @@ void loop()
       delay(500);
     }
     else {
-      myDFPlayer.enableLoop(); //enable loop.
       myDFPlayer.start();  //start the mp3 from the pause
       Serial.println("play");
       playMode = true;
@@ -133,9 +139,33 @@ void loop()
     digitalWrite(LED_BUILTIN, LOW);
   }
 
-  value = analogRead(volumePin);
-  myDFPlayer.volume(map(value, 1023, 0, 0, 28));
 
+  uint8_t nVol = map(analogRead(volumePin), 1023, 0, 0, 28);
+  if (nVol != vol) {
+    vol = nVol;
+    myDFPlayer.volume(vol);
+    Serial.println("volume changed");
+  }
+
+}
+
+
+void playTrack(uint8_t track) {
+   myDFPlayer.stop();
+   delay(200);
+   myDFPlayer.play(track);
+   delay(200);
+   int file = myDFPlayer.readCurrentFileNumber();
+
+   Serial.print("Track:");Serial.println(track);
+   Serial.print("File:");Serial.println(file);
+
+   while (file != track) {
+     myDFPlayer.play(track);
+     delay(200);
+     file = myDFPlayer.readCurrentFileNumber();
+     fileToPlay = file;
+   }
 }
 
 void printDetail(uint8_t type, int value) {
@@ -165,6 +195,15 @@ void printDetail(uint8_t type, int value) {
       Serial.print(F("Number:"));
       Serial.print(value);
       Serial.println(F(" Play Finished!"));
+      fileToPlay++;
+      delay(3000);      
+      Serial.println(F(" Play next in cue"));
+      playMode = true;
+      if (fileToPlay > numFiles) {
+        Serial.println(F("Play from the beginning!"));
+        fileToPlay = 1;
+      }
+      playTrack(fileToPlay);
       break;
     case DFPlayerError:
       Serial.print(F("DFPlayerError:"));
