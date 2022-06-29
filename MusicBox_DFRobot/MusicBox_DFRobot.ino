@@ -43,6 +43,7 @@ unsigned long timer = 0;
 unsigned long timeOffset = 0;
 
 uint8_t vol = 20;
+uint8_t nVol = 20;
 
 void setup()
 {
@@ -70,6 +71,9 @@ void setup()
   }
   Serial.println(F("DFPlayer Mini online."));
 
+// setting the current volume
+  vol = map(analogRead(volumePin), 1023, 0, 0, 28);
+  nVol = vol;
   myDFPlayer.volume(vol);  //Set volume value. From 0 to 30
   myDFPlayer.play(fileToPlay);  //Play the first mp3
 }
@@ -77,14 +81,18 @@ void setup()
 void loop()
 {
 
-  if (myDFPlayer.available() && (millis() - timer > 4000)) {
+  while (myDFPlayer.available() && (millis() - timer > 4000)) {
     timer = millis();
     Serial.print(timer);
     Serial.print(" ");
     Serial.println(millis());
     printDetail(myDFPlayer.readType(), myDFPlayer.read()); //Print the detail message from DFPlayer to handle different errors and states.
   }
-
+//if (!myDFPlayer.available()){
+//  
+//  Serial.println("not available");
+//  
+//  }
 
   // NEXT
   value = digitalRead(nextPin);  // read input value
@@ -140,11 +148,12 @@ void loop()
   }
 
 
-  uint8_t nVol = map(analogRead(volumePin), 1023, 0, 0, 28);
-  if (nVol != vol) {
+  nVol = map(analogRead(volumePin), 1023, 0, 0, 28);
+  if (abs(nVol-vol) > 2) {
     vol = nVol;
     myDFPlayer.volume(vol);
     Serial.println("volume changed");
+    delay(50);
   }
 
 }
